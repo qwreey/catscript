@@ -119,9 +119,19 @@ function module.async(str)
 			end
 		end
 		if not endat then break; end
-		str = concat{sub(str,1,st-1),gsub(fnName,":",".")," = ",fnSelf and "async(function(self" or "async(function(",sub(str,fnArgs,endat),")",sub(str,endat+1,-1)};
+		str = concat{sub(str,1,st-1),gsub(fnName,":",".")," = ",fnSelf and "async(function(self," or "async(function(",sub(str,fnArgs,endat),")",sub(str,endat+1,-1)};
 	end
 	return str;
+end
+
+local function tableDefFormatter(name)
+	if match(name,":") then
+		return format("%s = function (self,",gsub(name,":","."));
+	end
+	return format("%s = function (",name);
+end
+function module.tableDef(str)
+	return gsub(str,"function[ \t\n]+([_%.:%w])%(",tableDefFormatter);
 end
 
 return module;

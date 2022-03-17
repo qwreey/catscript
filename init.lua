@@ -16,6 +16,7 @@ local extensions = {
 	require("function").async;
 	require("function").await;
 	require("function").headerCall;
+	require("function").tableDef;
 	require("newline").clean;
 };
 
