@@ -28,4 +28,29 @@ function module.arrow(str)
 	)
 end
 
+local ignoreHeads = {
+	["return"] = true;
+	["function"] = true;
+	["end"] = true;
+	["or"] = true;
+	["and"] = true;
+	["then"] = true;
+	["if"] = true;
+	["do"] = true;
+	["local"] = true;
+	["else"] = true;
+	["elseif"] = true;
+	["while"] = true;
+	["repeat"] = true;
+	["until"] = true;
+};
+local function headerFormatter(head,func)
+	if ignoreHeads[head] then return; end
+	return format("%s.%s("):format(head,func);
+end
+
+function module.headerCall(str)
+	return gsub(str,"([%w_]+) ([%w_%.]+) -%(")
+end
+
 return module;
