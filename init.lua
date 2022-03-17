@@ -13,6 +13,10 @@ local extensions = {
 	require("logical").operator;
 	require("end").eof;
 	require("comment").comment;
+	require("function").async;
+	require("function").await;
+	require("function").headerCall;
+	require("newline").clean;
 };
 
 local module = {};

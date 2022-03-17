@@ -53,11 +53,11 @@ local function formatWhen(opt,pass,doing)
 	if doing == "" then
 		return format("%sif %s then",indent,opt);
 	end
-	return format("%sif %s then %s",indent,opt,doing);
+	return format("%sif %s then %s end",indent,opt,doing);
 end
 
 function module.whenopt(str)
-	return gsub(str,"([^\n]-)~([~=]?)([^\n]+)",formatWhen);
+	return gsub(str,"([^\n]-)~([~=]?)([^\n\\]+)",formatWhen);
 end
 
 return module;

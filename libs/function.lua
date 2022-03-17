@@ -46,11 +46,11 @@ local ignoreHeads = {
 };
 local function headerFormatter(head,func)
 	if ignoreHeads[head] then return; end
-	return format("%s.%s("):format(head,func);
+	return format("%s.%s(",func,head);
 end
 
 function module.headerCall(str)
-	return gsub(str,"([%w_]+) ([%w_%.]+) -%(")
+	return gsub(str,"([%w_]+) ([%w_%.]+) -%(",headerFormatter)
 end
 
 local find = string.find;
@@ -59,64 +59,69 @@ local sub = string.sub;
 local concat = table.concat;
 function module.await(str)
 	local lev = 0;
-  while true do
-    local await,func,start = match(str,"()await[ \n\t]+([:%._%w]+)%()(");
-    if not await then
-      break;
-    end
-    local endat;
-    local findat = start;
-    while true do
-	  	local _,ed,this = find(str,"[%(%)]",findat);
-      findat = ed + 1;
-	  	if this == "(" then
-		  	lev = lev + 1;
-	  	else
-		  	lev = lev - 1;
-	  	end
-	  	if lev == 0 then
-        endat = ed;
-		  	break;
-		  end
-	  end
-    local args = sub(str,start,endat);
-    local front = sub(str,1,await-1);
-    local back = sub(str,endat+1,-1);
-    str = concat{front,func,args,":await()",back};
-  end
-  return str;
+	while true do
+		local await,func,start = match(str,"()await[ \n\t]+([:%._%w]+)()%(");
+		if not await then
+			break;
+		end
+		local endat;
+		local findat = start;
+		while true do
+			local st,ed,this = find(str,"[%(%)]",findat);
+			if not st then break; end
+			this = this or sub(str,st,ed);
+			findat = ed + 1;
+			if this == "(" then
+				lev = lev + 1;
+			else
+				lev = lev - 1;
+			end
+			if lev == 0 then
+				endat = ed;
+				break;
+			end
+		end
+		local args = sub(str,start,endat);
+		local front = sub(str,1,await-1);
+		local back = sub(str,endat+1,-1);
+		str = concat{front,func,args,":await()",back};
+	end
+	return str;
 end
 
-local keywords = [
-  ["function"] = 1;
-  ["do"] = 1;
-  ["then"] = 1;
-  ["end"] = - 1;
-];
+local keywords = {
+	["function"] = 1;
+	["do"] = 1;
+	["if"] = 1;
+	["end"] = -1;
+};
 
 function module.async(str)
-  while true do
-    local st,fnName,fnArgs = match("()async[ \t\n]+function[ \t\n]-([%.:_%w]+)%(()");
-    if not st then break; end
-    local fnSelf = match(str,":");
-    fnName = gsub(fnName,":",".");
-    local lev = 1;
-    local findat = fnArgs;
-    local endat;
-    while true do
-      local stThis,edThis,this = find(str,"%a+",);
-      local keyword = keywords[this];
-      if keyword then
-        lev = lev + keyword;
-        if lev == 0 then
-          endat = edThis + 1;
-        end
-      end
-    end
-    
-  end
-  
-  local st,ed, = find(str);
+	while true do
+		local st,fnName,fnArgs = match(str,"()async[ \t\n]+function[ \t\n]-([%.:_%w]+)%(()");
+		if not st then break; end
+		local fnSelf = match(str,":");
+		local lev = 1;
+		local findat = fnArgs;
+		local endat;
+		while true do
+			local stThis,edThis,this = find(str,"%a+",findat);
+			if not stThis then break; end
+			this = this or sub(str,stThis,edThis);
+			local keyword = keywords[this];
+			findat = edThis + 1;
+			if keyword then
+				lev = lev + keyword;
+				if lev == 0 then
+					endat = edThis;
+					break;
+				end
+			end
+		end
+		if not endat then break; end
+		str = concat{sub(str,1,st-1),gsub(fnName,":",".")," = ",fnSelf and "async(function(self" or "async(function(",sub(str,fnArgs,endat),")",sub(str,endat+1,-1)};
+	end
+	return str;
 end
 
 return module;
