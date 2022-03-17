@@ -50,7 +50,7 @@ local function headerFormatter(head,func)
 end
 
 function module.headerCall(str)
-	return gsub(str,"([%w_]+) ([%w_%.]+) -%(",headerFormatter)
+	return gsub(str,"([%w_]+)[ \t\n]+([%w_%.]+)[ \t\n]*%(",headerFormatter)
 end
 
 local find = string.find;
@@ -60,7 +60,7 @@ local concat = table.concat;
 function module.await(str)
 	local lev = 0;
 	while true do
-		local await,func,start = match(str,"()await[ \n\t]+([:%._%w]+)()%(");
+		local await,func,start = match(str,"()await[ \n\t]+([:%._%w]+)[ \t\n]*()%(");
 		if not await then
 			break;
 		end
@@ -98,11 +98,13 @@ local keywords = {
 
 function module.async(str)
 	while true do
-		local st,fnName,fnArgs = match(str,"()async[ \t\n]+function[ \t\n]-([%.:_%w]+)%(()");
+		local st,fnName,argsStart = match(str,"()async[ \t\n]+function[ \t\n]*([%.:_%w]+)[ \t\n]*%(()");
 		if not st then break; end
-		local fnSelf = match(str,":");
+		local argsEnd = find(str,")",argsStart+1);
+		local args = sub(str,argsStart,argsEnd);
+		local fnSelf = match(fnName,":");
 		local lev = 1;
-		local findat = fnArgs;
+		local findat = argsStart;
 		local endat;
 		while true do
 			local stThis,edThis,this = find(str,"%a+",findat);
@@ -119,7 +121,8 @@ function module.async(str)
 			end
 		end
 		if not endat then break; end
-		str = concat{sub(str,1,st-1),gsub(fnName,":",".")," = ",fnSelf and "async(function(self," or "async(function(",sub(str,fnArgs,endat),")",sub(str,endat+1,-1)};
+		local haveArgs = match(args,"[_%w]");
+		str = concat{sub(str,1,st-1),gsub(fnName,":",".")," = ",(fnSelf and fnSelf ~= "") and (haveArgs and haveArgs ~= "" and "async(function(self," or "async(function(self") or "async(function(",sub(str,argsStart,endat),")",sub(str,endat+1,-1)};
 	end
 	return str;
 end
@@ -131,7 +134,7 @@ local function tableDefFormatter(name)
 	return format("%s = function (",name);
 end
 function module.tableDef(str)
-	return gsub(str,"function[ \t\n]+([_%.:%w])%(",tableDefFormatter);
+	return gsub(str,"function[ \t\n]+([_%.:%w]+)[ \t\n]*%(",tableDefFormatter);
 end
 
 return module;
