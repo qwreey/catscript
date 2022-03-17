@@ -53,9 +53,11 @@ function module.headerCall(str)
 	return gsub(str,"([%w_]+) ([%w_%.]+) -%(")
 end
 
+local find = string.find;
 function module.await(str)
 	local lev = 0;
 	while true do
+		local st,ed,this = find(str,"[%(%)]");
 		if this == "(" then
 			lev = lev + 1;
 		else
@@ -64,7 +66,6 @@ function module.await(str)
 		if lev == 0 then
 			break;
 		end
-		gmatch("[%(%)]");
 	end
 end
 
