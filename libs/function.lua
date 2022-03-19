@@ -126,7 +126,7 @@ function module.async(str)
 		local haveArgs = match(args,"[_%w]");
 		str = concat{sub(str,1,st-1),gsub(fnName,":",".")," = ",(fnSelf and fnSelf ~= "") and (haveArgs and haveArgs ~= "" and "async(function(self," or "async(function(self") or "async(function(",sub(str,argsStart,endat),")",sub(str,endat+1,-1)};
 	end
-	return (enabled and "" or "local promise = promise or require\"promise\"\nlocal async = promise.async\n") .. str;
+	return (enabled and "local promise = promise or require\"promise\"\nlocal async = promise.async\n" or "") .. str;
 end
 
 local function tableDefFormatter(name)
