@@ -97,9 +97,11 @@ local keywords = {
 };
 
 function module.async(str)
+	local enabled;
 	while true do
 		local st,fnName,argsStart = match(str,"()async[ \t\n]+function[ \t\n]*([%.:_%w]+)[ \t\n]*%(()");
 		if not st then break; end
+		enabled = true;
 		local argsEnd = find(str,")",argsStart+1);
 		local args = sub(str,argsStart,argsEnd);
 		local fnSelf = match(fnName,":");
@@ -124,7 +126,7 @@ function module.async(str)
 		local haveArgs = match(args,"[_%w]");
 		str = concat{sub(str,1,st-1),gsub(fnName,":",".")," = ",(fnSelf and fnSelf ~= "") and (haveArgs and haveArgs ~= "" and "async(function(self," or "async(function(self") or "async(function(",sub(str,argsStart,endat),")",sub(str,endat+1,-1)};
 	end
-	return str;
+	return (enabled and "" or "local promise = promise or require\"promise\"\nlocal async = promise.async\n") .. str;
 end
 
 local function tableDefFormatter(name)
