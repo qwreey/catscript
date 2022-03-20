@@ -50,7 +50,7 @@ local function headerFormatter(head,func)
 end
 
 function module.headerCall(str)
-	return gsub(str,"([%w_]+)[ \t\n]+([%w_%.]+)[ \t\n]*%(",headerFormatter)
+	return gsub(str,"([%w_]+)[ \t]+([%w_%.]+)[ \t\n]*%(",headerFormatter)
 end
 
 local find = string.find;
@@ -60,7 +60,7 @@ local concat = table.concat;
 function module.await(str)
 	local lev = 0;
 	while true do
-		local await,func,start = match(str,"()await[ \n\t]+([:%._%w]+)[ \t\n]*()%(");
+		local await,func,start = match(str,"()await[ \t]+([:%._%w]+)[ \t\n]*()%(");
 		if not await then
 			break;
 		end
@@ -99,7 +99,7 @@ local keywords = {
 function module.async(str)
 	local enabled;
 	while true do
-		local st,fnName,argsStart = match(str,"()async[ \t\n]+function[ \t\n]*([%.:_%w]+)[ \t\n]*%(()");
+		local st,fnName,argsStart = match(str,"()async[ \t]+function[ \t\n]*([%.:_%w]+)[ \t\n]*%(()");
 		if not st then break; end
 		enabled = true;
 		local argsEnd = find(str,")",argsStart+1);
