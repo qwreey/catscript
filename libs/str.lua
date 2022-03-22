@@ -86,4 +86,17 @@ function module.run(str)
 	return this;
 end
 
+local gsub = string.gsub;
+local match = string.match;
+local concat = table.concat;
+function module.formatter(str)
+	if match(str,"${.*}") then
+		local startWith = sub(str,1,1);
+		concat{"table.concat{",gsub(str,"${(.*)}",function (this)
+			return concat{startWith,",",this,",",startWith};
+		end),"}"};
+	end
+	return str;
+end
+
 return module;
