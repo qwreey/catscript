@@ -1,4 +1,5 @@
 local strParser = require("str").run;
+local formatter = require("str").formatter;
 
 local extensions = {
 	require("newline").newline;
@@ -69,7 +70,7 @@ function module.compile(str,env)
 
 	return stro:gsub(
 		"\27(%d+)\27",function (index)
-			return strs[tonumber(index)];
+			return formatter(strs[tonumber(index)]);
 		end
 	),env;
 end
