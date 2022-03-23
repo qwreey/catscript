@@ -89,15 +89,12 @@ end
 local gsub = string.gsub;
 local match = string.match;
 local concat = table.concat;
+local function formatValue(this)
+	return concat{"\",",this,",\""};
+end
 function module.formatter(str)
-	local startWith = sub(str,1,1);
-	if startWith ~= "`" then
-		return str;
-	end
-	if match(str,"${.*}") then
-		concat{"table.concat{",gsub(str,"${(.*)}",function (this)
-			return concat{startWith,",",this,",",startWith};
-		end),"}"};
+	if match(str,"%${.-}") then
+		return concat{"table.concat{",gsub(str,"%${(.-)}",formatValue),"}"};
 	end
 	return str;
 end
