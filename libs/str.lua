@@ -90,8 +90,11 @@ local gsub = string.gsub;
 local match = string.match;
 local concat = table.concat;
 function module.formatter(str)
+	local startWith = sub(str,1,1);
+	if startWith ~= "`" then
+		return str;
+	end
 	if match(str,"${.*}") then
-		local startWith = sub(str,1,1);
 		concat{"table.concat{",gsub(str,"${(.*)}",function (this)
 			return concat{startWith,",",this,",",startWith};
 		end),"}"};
