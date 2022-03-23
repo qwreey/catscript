@@ -35,28 +35,25 @@ function module.compile(str,env)
 	local full,strs,stri = {},{},1;
 	for _,this in ipairs(strParsed) do
 		local m,tstr = this.m,this.s;
+		tstr:gsub("\r","");
 		if not m then
 			insert(full,tstr);
-		elseif m == 1 then
+		elseif m == 1 then -- "
 			insert(strs,('"%s"'):format(tstr:gsub("\n","\\n")));
 			insert(full,("\27%d\27"):format(stri));
 			stri = stri + 1;
-		elseif m == 2 then
+		elseif m == 2 then -- '
 			insert(strs,("'%s'"):format(tstr:gsub("\n","\\n")));
 			insert(full,("\27%d\27"):format(stri));
 			stri = stri + 1;
-		elseif m == 3 then
+		elseif m == 3 then -- `
+			-- local spec = tstr:match("(\n *)$");
+			-- tstr = tstr:gsub(spec or "\n","\n");
 			local estr = ("\"%s\""):format(tstr:gsub("\n","\\n"):gsub("'","\\'"):gsub('"','\\"'));
-			local spec = estr:match("(\n +).-$");
-			estr = estr:gsub("^([ 	%s]-\n[ 	%s]-)",""); -- bug? we need fix this
-			if spec then
-				insert(strs,estr:gsub(spec,"\n"));
-			else
-				insert(strs,estr);
-			end
+			insert(strs,formatter(estr));
 			insert(full,("\27%d\27"):format(stri));
 			stri = stri + 1;
-		elseif m == 4 then
+		elseif m == 4 then -- [[
 			insert(strs,("[[%s]]"):format(tstr));
 			insert(full,("\27%d\27"):format(stri));
 			stri = stri + 1;
@@ -70,7 +67,7 @@ function module.compile(str,env)
 
 	return stro:gsub(
 		"\27(%d+)\27",function (index)
-			return formatter(strs[tonumber(index)]);
+			return strs[tonumber(index)];
 		end
 	),env;
 end
