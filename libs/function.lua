@@ -43,6 +43,7 @@ local ignoreHeads = {
 	["while"] = true;
 	["repeat"] = true;
 	["until"] = true;
+	["in"] = true;
 };
 local function headerFormatter(head,func)
 	if ignoreHeads[head] then return; end
