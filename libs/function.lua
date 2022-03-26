@@ -45,13 +45,12 @@ local ignoreHeads = {
 	["until"] = true;
 	["in"] = true;
 };
-local function headerFormatter(head,func)
+local function headerFormatter(head,func,mode)
 	if ignoreHeads[head] then return; end
-	return format("%s.%s(",func,head);
+	return format("%s.%s%s",func,head,mode);
 end
-
 function module.headerCall(str)
-	return gsub(str,"([%w_]+)[ \t]+([%w_%.]+)[ \t\n]*%(",headerFormatter)
+	return gsub(str,"([%w_]+)[ \t]+([%w_%.]+)[ \t\n]*([%({])",headerFormatter);
 end
 
 local find = string.find;
@@ -61,18 +60,19 @@ local concat = table.concat;
 function module.await(str)
 	local lev = 0;
 	while true do
-		local await,func,start = match(str,"()await[ \t]+([:%._%w]+)[ \t\n]*()%(");
+		local await,func,start,mode = match(str,"()await[ \t]+([:%._%w]+)[ \t\n]*()([%({])");
+		local pattern = mode == "{" and "[{}]" or "[%(%)]";
 		if not await then
 			break;
 		end
 		local endat;
 		local findat = start;
 		while true do
-			local st,ed,this = find(str,"[%(%)]",findat);
+			local st,ed,this = find(str,pattern,findat);
 			if not st then break; end
 			this = this or sub(str,st,ed);
 			findat = ed + 1;
-			if this == "(" then
+			if this == mode then
 				lev = lev + 1;
 			else
 				lev = lev - 1;
