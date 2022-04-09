@@ -10,7 +10,7 @@ local function normalFormatter(str,set)
 end
 
 local function selfFormatter(str,set)
-	local comma = str == "" and "" or ",";
+	local comma = str:gsub("\n \t","") == "" and "" or ",";
 	if set == "=" then return format(" = function(self%s%s)",comma,str); end
 	return format("function(self%s%s)",comma,str);
 end
@@ -130,14 +130,14 @@ function module.async(str)
 	return (enabled and "local promise = promise or require\"promise\"\nlocal async = promise.async\n" or "") .. str;
 end
 
-local function tableDefFormatter(name)
+local function tableDefFormatter(name,args)
 	if match(name,":") then
-		return format("%s = function (self,",gsub(name,":","."));
+		return format("%s = function (self%s%s)",gsub(name,":","."),args:gsub(" \t\n","") == "" and "" or ",",args);
 	end
-	return format("%s = function (",name);
+	return format("%s = function (%s)",name,args);
 end
 function module.tableDef(str)
-	return gsub(str,"function[ \t\n]+([_%.:%w]+)[ \t\n]*%(",tableDefFormatter);
+	return gsub(str,"function[ \t\n]+([_%.:%w]+)[ \t\n]*%(([^%)]*)%)",tableDefFormatter);
 end
 
 return module;
