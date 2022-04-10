@@ -141,5 +141,9 @@ function module.tableDef(str)
 	return gsub(str,"function[ \t\n]+([_%.:%w]+)[ \t\n]*%(([^%)]*)%)",tableDefFormatter);
 end
 
+function module.returnI(str)
+	return gsub(str,"%%","return ");
+end
+
 return module;
 
