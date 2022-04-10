@@ -29,6 +29,7 @@ function module.arrow(str)
 end
 
 local ignoreHeads = {
+	["not"] = true;
 	["return"] = true;
 	["function"] = true;
 	["end"] = true;

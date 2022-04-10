@@ -7,8 +7,8 @@ local extensions = {
 	require("operator").whenopt;
 	require("function").arrow;
 	require("self").self;
-	require("variable").let;
 	-- require("variable").global;
+	require("variable").let;
 	require("logical").compare;
 	require("logical").null;
 	require("logical").operator;
