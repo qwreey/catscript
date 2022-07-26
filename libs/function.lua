@@ -17,14 +17,14 @@ end
 
 function module.arrow(str)
 	return gsub(gsub(gsub(gsub(gsub(gsub(gsub(gsub(str,
-		" ?%(([^%(%)%-%%%+=%?:'\\\"\n]-)%) ?%-(%-?)>",normalFormatter),
-		" ?([%w_]-) ?%-(%-?)>",normalFormatter),
-		" ?%(([^%(%)%-%%%+=%?:'\\\"\n]-)%) ?=(=?)>",selfFormatter),
-		" ?([%w_]-) ?=(=?)>",selfFormatter),
-		" ?%-%->"," = function()"),
-		" ?==>"," = function(self)"),
-		" ?%->"," function()"),
-		" ?=>"," function(self)"
+		"%(([^%(%)%-%%%+=%?:'\\\"\n]-)%) ?%-(%-?)>",normalFormatter),
+		"([%w_]-) ?%-(%-?)>",normalFormatter),
+		"%(([^%(%)%-%%%+=%?:'\\\"\n]-)%) ?=(=?)>",selfFormatter),
+		"([%w_]-) ?=(=?)>",selfFormatter),
+		"%-%->"," = function()"),
+		"==>"," = function(self)"),
+		"%->"," function()"),
+		"=>"," function(self)"
 	)
 end
 
