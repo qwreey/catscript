@@ -7,13 +7,12 @@ local function letFormat(str)
 end
 
 function module.let(str)
-	return gsub(gsub(str,"([|%)}%]; \n\t])let ",str),"$ ?","local ");
+	return gsub(gsub(str,"([|%)}%]; \n\t])let ",letFormat),"$ ?","local ");
 end
 
-local function globalFormat(front,back)
-	return ("%sG_%s"):format(
-		(front and front ~= "") and front or " ",
-		(back and back ~= "") and back or " "
+local function globalFormat(front)
+	return ("%sG_."):format(
+		(front and front ~= "") and front or " "
 	)
 end
 
