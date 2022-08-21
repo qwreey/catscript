@@ -19,6 +19,7 @@ local extensions = {
 	require("function").headerCall;
 	require("function").tableDef;
 	require("newline").clean;
+	require("class").class;
 };
 
 local module = {};
@@ -60,10 +61,11 @@ function module.compile(str,env)
 		end
 	end
 
-	local stro = concat(full);
+	local stro = " "..concat(full);
 	for _,func in ipairs(extensions) do
 		stro = func(stro,env);
 	end
+	stro = stro:gsub("^ ","");
 
 	return stro:gsub(
 		"\27(%d+)\27",function (index)

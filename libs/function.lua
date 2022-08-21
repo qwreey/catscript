@@ -61,7 +61,7 @@ local concat = table.concat;
 function module.await(str)
 	local lev = 0;
 	while true do
-		local await,func,start,mode = match(str,"()await[ \t]+([:%._%w]+)[ \t\n]*()([%({])");
+		local await,prefix,func,start,mode = match(str,"()([|%)}%]; \n\t=%({%[])await[ \t]+([:%._%w]+)[ \t\n]*()([%({])");
 		local pattern = mode == "{" and "[{}]" or "[%(%)]";
 		if not await then
 			break;
@@ -86,7 +86,7 @@ function module.await(str)
 		local args = sub(str,start,endat);
 		local front = sub(str,1,await-1);
 		local back = sub(str,endat+1,-1);
-		str = concat{front,func,args,":await()",back};
+		str = concat{prefix or "",front,func,args,":await()",back};
 	end
 	return str;
 end
@@ -101,7 +101,8 @@ local keywords = {
 function module.async(str)
 	local enabled;
 	while true do
-		local st,fnName,argsStart = match(str,"()async[ \t]+function[ \t\n]*([%.:_%w]+)[ \t\n]*%(()");
+		local st,prefix,fnSetted,fnName,argsStart = match(str,"()([|%)}%]; \n\t=%({%[])async[ \t]+([%._%w]*[ \t]*=?[ \t]*)function[ \t\n]*([%.:_%w]*)[ \t\n]*%(()");
+		local isNoneNamed = fnName == "";
 		if not st then break; end
 		enabled = true;
 		local argsEnd = find(str,")",argsStart+1);
@@ -126,7 +127,16 @@ function module.async(str)
 		end
 		if not endat then break; end
 		local haveArgs = match(args,"[_%w]");
-		str = concat{sub(str,1,st-1),gsub(fnName,":",".")," = ",(fnSelf and fnSelf ~= "") and (haveArgs and haveArgs ~= "" and "async(function(self," or "async(function(self") or "async(function(",sub(str,argsStart,endat),")",sub(str,endat+1,-1)};
+		str = concat{sub(str,1,st-1),
+			prefix or "",
+			fnSetted or "",
+			isNoneNamed and "" or gsub(fnName,":","."),
+			isNoneNamed and "" or " = ",
+			(fnSelf and fnSelf ~= "") and (haveArgs and haveArgs ~= "" and "async(function(self," or "async(function(self") or "async(function(",
+			sub(str,argsStart,endat),
+			")",
+			sub(str,endat+1,-1)
+		};
 	end
 	return (enabled and "local promise = promise or require\"promise\"\nlocal async = promise.async\n" or "") .. str;
 end

@@ -2,12 +2,16 @@ local module = {};
 
 local gsub = string.gsub;
 
-function module.let(str)
-	return gsub(gsub(str,"let ","local "),"$ ?","local ");
+local function letFormat(str)
+	return ("%slocal "):format(str or "");
 end
 
-function module.global(str)
-	return gsub(gsub(str,"global ","_G."),"$$ ?","_G.");
+function module.let(str)
+	return gsub(gsub(str,"([|%)}%]; \n\t])let ",str),"$ ?","local ");
 end
+
+-- function module.global(str)
+-- 	return gsub(gsub(str,"global ","_G."),"$$ ?","_G.");
+-- end
 
 return module;
