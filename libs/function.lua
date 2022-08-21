@@ -47,7 +47,7 @@ local ignoreHeads = {
 	["in"] = true;
 };
 local function headerFormatter(head,func,mode)
-	if ignoreHeads[head] then return; end
+	if ignoreHeads[head] or ignoreHeads[func] then return; end
 	return format("%s.%s%s",func,head,mode);
 end
 function module.headerCall(str)
