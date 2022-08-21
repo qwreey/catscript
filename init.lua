@@ -2,7 +2,6 @@ local strParser = require("str").run;
 local formatter = require("str").formatter;
 
 local extensions = {
-	require("newline").newline;
 	require("operator").operator;
 	require("operator").whenopt;
 	require("function").arrow;
@@ -18,8 +17,8 @@ local extensions = {
 	require("function").await;
 	require("function").headerCall;
 	require("function").tableDef;
-	require("newline").clean;
 	require("classer").class;
+	-- require("using").using;
 };
 
 local module = {};

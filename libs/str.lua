@@ -89,8 +89,10 @@ end
 local gsub = string.gsub;
 local match = string.match;
 local concat = table.concat;
+local compile;
 local function formatValue(this)
-	return concat{"\",",this,",\""};
+	if not compile then compile = require"../init".compile; end
+	return concat{"\",",compile(this),",\""};
 end
 function module.formatter(str)
 	if match(str,"%${.-}") then

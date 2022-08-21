@@ -138,7 +138,7 @@ function module.async(str)
 			sub(str,endat+1,-1)
 		};
 	end
-	return (enabled and "local promise = promise or require\"promise\"\nlocal async = promise.async\n" or "") .. str;
+	return (enabled and "local promise = promise or require\"promise\";local async = promise.async " or "") .. str;
 end
 
 local function tableDefFormatter(name,args)
@@ -152,4 +152,3 @@ function module.tableDef(str)
 end
 
 return module;
-
