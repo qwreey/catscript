@@ -23,8 +23,8 @@ function module.arrow(str)
 		"( ?)([%w_]-) ?=(=?)>",selfFormatter),
 		" ?%-%->"," = function()"),
 		" ?==>"," = function(self)"),
-		" ?%->"," function()"),
-		" ?=>"," function(self)"
+		" ?%->"," function()"), -- not used? idk
+		" ?=>"," function(self)" -- not used? idk
 	)
 end
 
