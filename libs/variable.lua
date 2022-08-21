@@ -10,8 +10,15 @@ function module.let(str)
 	return gsub(gsub(str,"([|%)}%]; \n\t])let ",str),"$ ?","local ");
 end
 
--- function module.global(str)
--- 	return gsub(gsub(str,"global ","_G."),"$$ ?","_G.");
--- end
+local function globalFormat(front,back)
+	return ("%sG_%s"):format(
+		(front and front ~= "") and front or " ",
+		(back and back ~= "") and back or " "
+	)
+end
+
+function module.global(str)
+	return gsub(gsub(str,"([|%)}%]; \n\t=%({%[])global[ %.]",globalFormat),"$$ ?","_G.");
+end
 
 return module;

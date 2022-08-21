@@ -7,7 +7,7 @@ local extensions = {
 	require("operator").whenopt;
 	require("function").arrow;
 	require("self").self;
-	-- require("variable").global;
+	require("variable").global;
 	require("variable").let;
 	require("logical").compare;
 	require("logical").null;
@@ -19,7 +19,7 @@ local extensions = {
 	require("function").headerCall;
 	require("function").tableDef;
 	require("newline").clean;
-	require("class").class;
+	require("classer").class;
 };
 
 local module = {};
@@ -33,7 +33,7 @@ function module.compile(str,env)
 	local strParsed = strParser(str);
 
 	-- run extensions and make output
-	local full,strs,stri = {},{},1;
+	local full,strs,stri = {" "},{},1;
 	for _,this in ipairs(strParsed) do
 		local m,tstr = this.m,this.s;
 		tstr:gsub("\r","");
@@ -61,11 +61,12 @@ function module.compile(str,env)
 		end
 	end
 
-	local stro = " "..concat(full);
+	insert(full," ");
+	local stro = concat(full);
 	for _,func in ipairs(extensions) do
 		stro = func(stro,env);
 	end
-	stro = stro:gsub("^ ","");
+	stro = stro:gsub("^ ",""):gsub(" $","");
 
 	return stro:gsub(
 		"\27(%d+)\27",function (index)
