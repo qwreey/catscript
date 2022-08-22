@@ -11,7 +11,7 @@ function module.let(str)
 end
 
 local function globalFormat(front)
-	return ("%sG_."):format(
+	return ("%s_G."):format(
 		(front and front ~= "") and front or " "
 	)
 end

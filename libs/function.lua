@@ -79,6 +79,9 @@ function module.await(str)
 				lev = lev - 1;
 			end
 			if lev == 0 then
+				-- we need to fix await asdf().asdf => asdf():await().asdf to asdf().asdf:await()
+				-- local indexerStart,indexerEnd,indexerPrefix,indexer
+				-- = find(str,"^([ \n]*)([%.:%[])",st);
 				endat = ed;
 				break;
 			end
