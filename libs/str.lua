@@ -96,7 +96,8 @@ local function formatValue(this)
 end
 function module.formatter(str)
 	if match(str,"%${.-}") then
-		return concat{"table.concat{",gsub(str,"%${(.-)}",formatValue),"}"};
+		local newlines = match(str,"\n*$") or "";
+		return concat{"(table.concat{",gsub(gsub(str,"\n",""),"%${(.-)}",formatValue),"})",newlines};
 	end
 	return str;
 end

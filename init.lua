@@ -67,7 +67,7 @@ function module.compile(str,env)
 			for _ in tstr:gmatch("\n") do
 				newlineCount = newlineCount + 1;
 			end
-			local estr = ("(\"%s\")%s"):format(
+			local estr = ("\"%s\"%s"):format(
 				tstr:gsub("\n","\\n"):gsub("'","\\'"):gsub('"','\\"'),
 				("\n"):rep(newlineCount)
 			);
