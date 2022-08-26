@@ -49,7 +49,10 @@ function module.compile(str,env)
 		elseif m == 3 then -- `
 			-- local spec = tstr:match("(\n *)$");
 			-- tstr = tstr:gsub(spec or "\n","\n");
-			local estr = ("\"%s\""):format(tstr:gsub("\n","\\n"):gsub("'","\\'"):gsub('"','\\"'));
+			local estr = ("(\"%s\")%s"):format(
+				tstr:gsub("\n","\\n"):gsub("'","\\'"):gsub('"','\\"'),
+				
+			);
 			insert(strs,formatter(estr));
 			insert(full,("\27%d\27"):format(stri));
 			stri = stri + 1;
