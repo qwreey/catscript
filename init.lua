@@ -39,19 +39,37 @@ function module.compile(str,env)
 		if not m then
 			insert(full,tstr);
 		elseif m == 1 then -- "
-			insert(strs,('"%s"'):format(tstr:gsub("\n","\\n")));
+			local newlineCount = 0;
+			for _ in tstr:gmatch("\n") do
+				newlineCount = newlineCount + 1;
+			end
+			insert(strs,('"%s"%s'):format(
+				tstr:gsub("\n","\\n"),
+				("\n"):rep(newlineCount)
+			));
 			insert(full,("\27%d\27"):format(stri));
 			stri = stri + 1;
 		elseif m == 2 then -- '
-			insert(strs,("'%s'"):format(tstr:gsub("\n","\\n")));
+			local newlineCount = 0;
+			for _ in tstr:gmatch("\n") do
+				newlineCount = newlineCount + 1;
+			end
+			insert(strs,("'%s'%s"):format(
+				tstr:gsub("\n","\\n"),
+				("\n"):rep(newlineCount)
+			));
 			insert(full,("\27%d\27"):format(stri));
 			stri = stri + 1;
 		elseif m == 3 then -- `
 			-- local spec = tstr:match("(\n *)$");
 			-- tstr = tstr:gsub(spec or "\n","\n");
+			local newlineCount = 0;
+			for _ in tstr:gmatch("\n") do
+				newlineCount = newlineCount + 1;
+			end
 			local estr = ("(\"%s\")%s"):format(
 				tstr:gsub("\n","\\n"):gsub("'","\\'"):gsub('"','\\"'),
-				
+				("\n"):rep(newlineCount)
 			);
 			insert(strs,formatter(estr));
 			insert(full,("\27%d\27"):format(stri));
