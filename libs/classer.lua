@@ -6,7 +6,7 @@ local function class(prefix,str)
 end
 
 function module.class(str)
-    return str:gsub("([|%)}%]; \n\t=%({%[])class *([_%w%.]+)",class);
+    return str:gsub("([|%)}%]; \n\t=%({%[])class[ \n\t]+([_%w%.]+)",class);
 end
 
 return module;
