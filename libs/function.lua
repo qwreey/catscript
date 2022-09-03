@@ -3,34 +3,94 @@ local module = {};
 
 local gsub = string.gsub;
 local format = string.format;
+local match = string.match
 
-local function normalFormatter(head,fnname,front,str,set)
+local function normalFormatter(head,prefix1,fnname,prefix2,str,set)
 	if set == "-" then
 		if head == "local" and fnname then
 			return format("local function %s(%s)",fnname,str);
 		end
-		return format("%s%s = function(%s)",head or "",fnname or "",str);
+		return format("%s%s%s = function(%s)",head or "",prefix1 or "",fnname or "",str);
 	end
-	return format("%s%s%sfunction(%s)",head or "",fnname or "",front or "",str);
+
+	return format("%s%s%s%s%sfunction(%s)",
+		head or "",prefix1 or "",fnname or "",prefix2 or "",
+		(((prefix2 == "" and fnname ~= "" and fnname)
+		or (prefix1 == "" and head ~= "" and head))) and " " or "",
+		str
+	);
 end
 
-local function selfFormatter(head,fnname,front,str,set)
-	local comma = str:gsub("\n \t","") == "" and "" or ",";
+local function normalFormatterNoBracket(head,prefix1,fnname,prefix2,str,set)
+	if str == "" and fnname == "" then
+		str = head;
+		head = "";
+	elseif str == "" then
+		str = fnname;
+		fnname = head;
+		head = "";
+	end
+	if set == "-" then
+		if head == "local" and fnname then
+			return format("local function %s(%s)",fnname,str);
+		end
+		return format("%s%s%s = function(%s)",head or "",prefix1 or "",fnname or "",str);
+	end
+
+	return format("%s%s%s%s%sfunction(%s)",
+		head or "",prefix1 or "",fnname or "",prefix2 or "",
+		(((prefix2 == "" and fnname ~= "" and fnname)
+		or (prefix1 == "" and head ~= "" and head))) and " " or "",
+		str
+	);
+end
+
+local function selfFormatter(head,prefix1,fnname,prefix2,str,set)
+	local comma = gsub(str,"\n \t","") == "" and "" or ",";
 	if set == "=" then
 		if head == "local" and fnname then
 			return format("local function %s(self%s%s)",fnname,comma,str);
 		end
-		return format("%s%s = function(self%s%s)",head or "",fnname or "",comma,str);
+		return format("%s%s%s = function(self%s%s)",head or "",prefix1 or "",fnname or "",comma,str);
 	end
-	return format("%s%s%sfunction(self%s%s)",head or "",fnname or "",front or "",comma,str);
+	return format("%s%s%s%s%sfunction(self%s%s)",
+		head or "",prefix1 or "",fnname or "",prefix2 or "",
+		(((prefix2 == "" and fnname ~= "" and fnname)
+		or (prefix1 == "" and head ~= "" and head))) and " " or "",
+		comma,str
+	);
+end
+
+local function selfFormatterNoBracket(head,prefix1,fnname,prefix2,str,set)
+	if str == "" and fnname == "" then
+		str = head;
+		head = "";
+	elseif str == "" then
+		str = fnname;
+		fnname = head;
+		head = "";
+	end
+	local comma = gsub(str,"\n \t","") == "" and "" or ",";
+	if set == "=" then
+		if head == "local" and fnname then
+			return format("local function %s(self%s%s)",fnname,comma,str);
+		end
+		return format("%s%s%s = function(self%s%s)",head or "",prefix1 or "",fnname or "",comma,str);
+	end
+	return format("%s%s%s%s%sfunction(self%s%s)",
+		head or "",prefix1 or "",fnname or "",prefix2 or "",
+		(((prefix2 == "" and fnname ~= "" and fnname)
+		or (prefix1 == "" and head ~= "" and head))) and " " or "",
+		comma,str
+	);
 end
 
 function module.arrow(str)
 	return gsub(gsub(gsub(gsub(gsub(gsub(gsub(gsub(str,
-		"(%w*) ?(%w*)( ?)%(([^%(%)%-%%%+=%?:'\\\"\n]-)%) ?%-(%-?)>",normalFormatter),
-		"(%w*) ?(%w*)( ?)([%w_]-) ?%-(%-?)>",normalFormatter),
-		"(%w*) ?(%w*)( ?)%(([^%(%)%-%%%+=%?:'\\\"\n]-)%) ?=(=?)>",selfFormatter),
-		"(%w*) ?(%w*)( ?)([%w_]-) ?=(=?)>",selfFormatter),
+		"(%w*)( ?)([%w_]*)( ?)%(([^%(%)%-%%%+=%?:'\\\"\n]-)%) ?%-(%-?)>",normalFormatter),
+		"(%w*)( ?)([%w_]*)( ?)([%w_]*) ?%-(%-?)>",normalFormatterNoBracket),
+		"(%w*)( ?)([%w_]*)( ?)%(([^%(%)%-%%%+=%?:'\\\"\n]-)%) ?=(=?)>",selfFormatter),
+		"(%w*)( ?)([%w_]*)( ?)([%w_]*) ?=(=?)>",selfFormatterNoBracket),
 		" ?%-%->"," = function()"),
 		" ?==>"," = function(self)"),
 		" ?%->"," function()"), -- not used? idk
@@ -39,6 +99,7 @@ function module.arrow(str)
 end
 
 local ignoreHeads = {
+	["class"] = true;
 	["not"] = true;
 	["return"] = true;
 	["function"] = true;
@@ -114,7 +175,7 @@ local keywords = {
 function module.async(str)
 	local enabled;
 	while true do
-		local st,prefix,fnSetted,fnName,argsStart = match(str,"()([|%)}%]; \n\t=%({%[])async[ \t]+([%._%w]*[ \t]*=?[ \t]*)function[ \t\n]*([%.:_%w]*)[ \t\n]*%(()");
+		local st,prefix,fnSetted,fnName,argsStart = match(str,"()([,|%)}%]; \n\t=%({%[])async[ \t]+([%._%w]*[ \t]*=?[ \t]*)function[ \t\n]*([%.:_%w]*)[ \t\n]*%(()");
 		local isNoneNamed = fnName == "";
 		if not st then break; end
 		enabled = true;

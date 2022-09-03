@@ -15,7 +15,7 @@ local function selfFormatter(front,index,caller,all,st,mid,ed)
 end
 
 function module.self(str)
-	return gsub(str,"([%)}%]; \n\t=%({%[]?)@([%w_]*)([%.:]?)((%[?)([^ ]*)(%]?))",selfFormatter);
+	return gsub(str,"([,%)}%]; \n\t=%({%[]?)@([%w_]*)([%.:]?)((%[?)([^ ]*)(%]?))",selfFormatter);
 end
 
 return module;
