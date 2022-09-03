@@ -1,13 +1,20 @@
 local strParser = require("str").run;
 local formatter = require("str").formatter;
 
+-- todo
+-- extend 문법
+-- using 문법
+-- class asdf {} 로 만들기
+-- *= 문법
+-- await 문법 수정 (파일참조 ./libs/function.lua)
+
 local extensions = {
 	require("operator").operator;
 	require("operator").whenopt;
-	require("function").arrow;
 	require("self").self;
 	require("variable").global;
 	require("variable").let;
+	require("function").arrow;
 	require("logical").compare;
 	require("logical").null;
 	require("logical").operator;

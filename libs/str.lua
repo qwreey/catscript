@@ -16,9 +16,9 @@ function module.run(str)
 	insert(this,obj);
 
 	-- start,before,after
-	local function con(st,b,a) -- concat into str
-		obj.s = obj.s .. sub(str,1,st+b);
-		str = sub(str,st+a,-1);
+	local function con(start,pushEnd,subEnd,replace) -- concat into str
+		obj.s = obj.s .. (replace or sub(str,1,start+pushEnd));
+		str = sub(str,start+subEnd,-1);
 	end
 
 	-- mode,start,before,after
@@ -40,7 +40,11 @@ function module.run(str)
 		local m = obj.m;
 		local fstr = sub(str,st,st); -- found str
 		if fstr == "\\" then -- on escape
-			con(st,1,2);
+			if sub(str,2,2) == "`" then
+				con(st,1,2,"`");
+			else
+				con(st,1,2);
+			end
 		elseif fstr == '"' then -- str mode "
 			if not m then -- on
 				push(1,st,-1,1);

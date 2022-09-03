@@ -4,23 +4,33 @@ local module = {};
 local gsub = string.gsub;
 local format = string.format;
 
-local function normalFormatter(front,str,set)
-	if set == "-" then return format(" = function(%s)",str); end
-	return format("%sfunction(%s)",front or "",str);
+local function normalFormatter(head,fnname,front,str,set)
+	if set == "-" then
+		if head == "local" and fnname then
+			return format("local function %s(%s)",fnname,str);
+		end
+		return format("%s%s = function(%s)",head or "",fnname or "",str);
+	end
+	return format("%s%s%sfunction(%s)",head or "",fnname or "",front or "",str);
 end
 
-local function selfFormatter(front,str,set)
+local function selfFormatter(head,fnname,front,str,set)
 	local comma = str:gsub("\n \t","") == "" and "" or ",";
-	if set == "=" then return format(" = function(self%s%s)",comma,str); end
-	return format("%sfunction(self%s%s)",front or "",comma,str);
+	if set == "=" then
+		if head == "local" and fnname then
+			return format("local function %s(self%s%s)",fnname,comma,str);
+		end
+		return format("%s%s = function(self%s%s)",head or "",fnname or "",comma,str);
+	end
+	return format("%s%s%sfunction(self%s%s)",head or "",fnname or "",front or "",comma,str);
 end
 
 function module.arrow(str)
 	return gsub(gsub(gsub(gsub(gsub(gsub(gsub(gsub(str,
-		"( ?)%(([^%(%)%-%%%+=%?:'\\\"\n]-)%) ?%-(%-?)>",normalFormatter),
-		"( ?)([%w_]-) ?%-(%-?)>",normalFormatter),
-		"( ?)%(([^%(%)%-%%%+=%?:'\\\"\n]-)%) ?=(=?)>",selfFormatter),
-		"( ?)([%w_]-) ?=(=?)>",selfFormatter),
+		"(%w*) ?(%w*)( ?)%(([^%(%)%-%%%+=%?:'\\\"\n]-)%) ?%-(%-?)>",normalFormatter),
+		"(%w*) ?(%w*)( ?)([%w_]-) ?%-(%-?)>",normalFormatter),
+		"(%w*) ?(%w*)( ?)%(([^%(%)%-%%%+=%?:'\\\"\n]-)%) ?=(=?)>",selfFormatter),
+		"(%w*) ?(%w*)( ?)([%w_]-) ?=(=?)>",selfFormatter),
 		" ?%-%->"," = function()"),
 		" ?==>"," = function(self)"),
 		" ?%->"," function()"), -- not used? idk
@@ -144,14 +154,15 @@ function module.async(str)
 	return (enabled and "local promise = promise or require\"promise\";local async = promise.async " or "") .. str;
 end
 
-local function tableDefFormatter(name,args)
+local function tableDefFormatter(head,name,args)
+	if head == "local" then return; end
 	if match(name,":") then
 		return format("%s = function (self%s%s)",gsub(name,":","."),args:gsub(" \t\n","") == "" and "" or ",",args);
 	end
 	return format("%s = function (%s)",name,args);
 end
 function module.tableDef(str)
-	return gsub(str,"function[ \t\n]+([_%.:%w]+)[ \t\n]*%(([^%)]*)%)",tableDefFormatter);
+	return gsub(str,"(%w*) *function[ \t\n]+([_%.:%w]+)[ \t\n]*%(([^%)]*)%)",tableDefFormatter);
 end
 
 return module;
