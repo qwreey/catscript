@@ -10,7 +10,16 @@ local function eof(front,back)
 end
 
 function module.eof(str)
-	return gsub(gsub(str,"([%)}%]; \n\t=%({%[]?)|([%)}%]; \n\t=%({%[]?)",eof),"end\n end","end\nend");
+	return
+	gsub(
+		gsub(
+			str,
+			"([%)}%]; \n\t=%({%[]?)|([%)}%]; \n\t=%({%[]?)",
+			eof
+		)
+		,"end\n end",
+		"end\nend"
+	);
 end
 
 return module;

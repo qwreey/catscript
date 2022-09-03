@@ -5,7 +5,7 @@ local formatter = require("str").formatter;
 -- extend 문법
 -- using 문법
 -- class asdf {} 로 만들기
--- *= 문법
+-- *= 문법 우선순위 지정. 즉 () 넣기
 -- await 문법 수정 (파일참조 ./libs/function.lua)
 
 local extensions = {

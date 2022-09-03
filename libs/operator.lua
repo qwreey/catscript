@@ -25,12 +25,12 @@ end
 
 function module.operator(str)
 	return gsub(gsub(gsub(gsub(gsub(gsub(str,
-		"([%w_] -%+= -)",ps),
-		"([%w_] -%-= -)",mi),
-		"([%w_] -%*= -)",mu),
-		"([%w_] -%^= -)",sq),
-		"([%w_] -/= -)" ,di),
-		"([%w_] -%%= -)",md
+		"([%w_]+) *%+= *",ps),
+		"([%w_]+) *%-= *",mi),
+		"([%w_]+) *%*= *",mu),
+		"([%w_]+) *%^= *",sq),
+		"([%w_]+) */= *" ,di),
+		"([%w_]+) *%%= *",md
 	);
 end
 
