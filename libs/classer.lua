@@ -32,18 +32,19 @@ function module.class(str)
                 else
                     lev = lev - 1;
                 end
+                if lev <= 0 then break; end
             end
             str = concat{
-                sub(str,0,startAt-1),prefix or "",name," = ",sub(str,endAt,findAt-1),
-                name,".__index=",name,";",name,".new=function(t,...)local i,c,r=,",name,
-                ".init,",name,".constructor;if(c)then;r=c(t,...)else;c=t;end;setmetatable(r,",name,
-                ");if(i)then;i(r,...)end",footer or "",
+                sub(str,0,startAt-1),prefix or "",name," = ",sub(str,endAt,findAt-1)," ",
+                name,".__index=",name,";",name,".new=function(t,...)local i,c,r=",name,
+                ".init,",name,".constructor;if(c)then;r=c(t,...)else;r=t or{};end;setmetatable(r,",name,
+                ");if(i)then;i(r,...)end;return(r);end",footer or "",
                 sub(str,findAt,-1)
             };
         else
             str = concat{
                 sub(str,0,startAt-1),
-                format("%s%s.__index=%s;%s.new=function(t,...)local i,c,r=,%s.init,%s.constructor;if(c)then;r=c(t,...)else;c=t;end;setmetatable(r,%s);if(i)then;i(r,...)end%s",
+                format("%s%s.__index=%s;%s.new=function(t,...)local i,c,r=%s.init,%s.constructor;if(c)then;r=c(t,...)else;r=t or{};end;setmetatable(r,%s);if(i)then;i(r,...)end;return(r);end%s",
                     prefix,name,name,name,name,name,name,
                     footer or ""
                 ),

@@ -4,11 +4,12 @@ local formatter = require("str").formatter;
 -- todo
 -- extend 문법
 -- using 문법
--- class asdf {} 로 만들기
 -- *= 문법 우선순위 지정. 즉 () 넣기
 -- await 문법 수정 (파일참조 ./libs/function.lua)
+-- try 문법
 
 local extensions = {
+	require("newlines").newlineEscaper;
 	require("operator").operator;
 	require("operator").whenopt;
 	require("self").self;
@@ -25,6 +26,7 @@ local extensions = {
 	require("function").headerCall;
 	require("function").tableDef;
 	require("classer").class;
+	require("newlines").newlineUnescaper;
 	-- require("using").using;
 };
 

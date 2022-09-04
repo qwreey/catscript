@@ -15,8 +15,11 @@ function module.compare(str)
 	return gsub(str,"!=","~=");
 end
 
+local function nullFormatter(st,ed)
+	return ("%snil%s"):format(st or "",ed or "");
+end
 function module.null(str)
-	return gsub(str,"null","nil");
+	return gsub(str,"([,%)}%]; \n\t=%({%[]?)null([,%)}%]; \n\t=%({%[]?)",nullFormatter);
 end
 
 return module;
