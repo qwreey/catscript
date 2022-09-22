@@ -93,6 +93,7 @@ end
 local gsub = string.gsub;
 local match = string.match;
 local concat = table.concat;
+local format = string.format;
 local compile;
 local function formatValue(this)
 	if not compile then compile = require"../init".compile; end
@@ -101,9 +102,9 @@ end
 function module.formatter(str)
 	if match(str,"%${.-}") then
 		local newlines = match(str,"\n*$") or "";
-		return concat{"(table.concat{",gsub(gsub(str,"\n",""),"%${(.-)}",formatValue),"})",newlines};
+		return concat{"table.concat{",gsub(gsub(str,"\n",""),"%${(.-)}",formatValue),"}",newlines};
 	end
-	return str;
+	return format("(%s)",str);
 end
 
 return module;

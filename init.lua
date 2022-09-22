@@ -52,7 +52,7 @@ function module.compile(str,env)
 			for _ in tstr:gmatch("\n") do
 				newlineCount = newlineCount + 1;
 			end
-			insert(strs,('"%s"%s'):format(
+			insert(strs,('("%s")%s'):format(
 				tstr:gsub("\n","\\n"),
 				("\n"):rep(newlineCount)
 			));
@@ -63,7 +63,7 @@ function module.compile(str,env)
 			for _ in tstr:gmatch("\n") do
 				newlineCount = newlineCount + 1;
 			end
-			insert(strs,("'%s'%s"):format(
+			insert(strs,("('%s')%s"):format(
 				tstr:gsub("\n","\\n"),
 				("\n"):rep(newlineCount)
 			));
@@ -84,7 +84,7 @@ function module.compile(str,env)
 			insert(full,("\27%d\27"):format(stri));
 			stri = stri + 1;
 		elseif m == 4 then -- [[
-			insert(strs,("[[%s]]"):format(tstr));
+			insert(strs,("([[%s]])"):format(tstr));
 			insert(full,("\27%d\27"):format(stri));
 			stri = stri + 1;
 		end

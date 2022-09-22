@@ -37,13 +37,10 @@ end
 local function removeSpace(str)
 	return gsub(gsub(str,"^[\t ]+",""),"[\t ]+$","");
 end
-local function getIndent(line)
-	return match(line,"^ *");
-end
 
 local function formatWhen(opt,pass,doing)
 	if pass == "=" then return; end
-	local indent = getIndent(opt);
+	local indent = opt:match("^[\t\32]+");
 	opt,doing = removeSpace(opt),removeSpace(doing);
 	if opt == "" then
 		opt = doing;
