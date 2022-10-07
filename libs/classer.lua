@@ -12,6 +12,7 @@ local find = string.find;
 local concat = table.concat;
 local sub = string.sub;
 local format = string.format;
+local gsub = string.gsub;
 function module.class(str)
     while true do
         local startAt, endAt, prefix, name, footer, mode =
@@ -53,7 +54,7 @@ function module.class(str)
         end
     end
 
-    return str:gsub("([|%)}%]; \n\t=%({%[])class[ \n\t]+([_%w%.]+)([\n\t ]*)({)",class);
+    return gsub(str,"([|%)}%]; \n\t=%({%[])class[ \n\t]+([_%w%.]+)([\n\t ]*)({)",class);
 end
 
 return module;

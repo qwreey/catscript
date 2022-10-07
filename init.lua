@@ -26,6 +26,7 @@ local extensions = {
 	require("function").headerCall;
 	require("function").tableDef;
 	require("classer").class;
+	require("pointer").ptr;
 	require("newlines").newlineUnescaper;
 	-- require("using").using;
 };
